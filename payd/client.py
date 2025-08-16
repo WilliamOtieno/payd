@@ -241,7 +241,7 @@ class PaydClient:
                 return {}
         return response.json()
 
-    def query_transaction(self) -> dict:
+    def query_transactions(self) -> dict:
         """Queries the transaction history.
 
         Returns:
