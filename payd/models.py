@@ -14,12 +14,12 @@ class User:
         location (str): The user's location.
     """
 
-    first_name: str
-    last_name: str
-    username: str
-    email: str
-    phone_number: str
-    location: str
+    first_name: str = ""
+    last_name: str = ""
+    username: str = ""
+    email: str = ""
+    phone_number: str = ""
+    location: str = ""
 
 
 @dataclass

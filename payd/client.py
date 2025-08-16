@@ -43,7 +43,6 @@ class PaydClient:
                 - phone_number (str)
             transaction (Transaction): The transaction details. The following attributes are required:
                 - amount (int)
-                - payment_method (str)
                 - provider (str)
                 - callback_url (str)
                 - narration (str)
@@ -59,7 +58,7 @@ class PaydClient:
             "last_name": user.last_name,
             "location": user.location,
             "username": user.username,
-            "payment_method": transaction.payment_method,
+            "payment_method": "card",
             "provider": transaction.provider,
             "callback_url": transaction.callback_url,
             "reason": transaction.narration,
