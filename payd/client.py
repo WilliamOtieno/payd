@@ -9,17 +9,48 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class PaydClient:
+    """A client for interacting with the Payd API.
+
+    Args:
+        username (str): The username for authentication.
+        password (str): The password for authentication.
+    """
 
     def __init__(self, username, password):
         self.acc_username = username
         self.acc_password = password
 
     def build_auth_headers(self) -> dict:
+        """Builds the authentication headers for API requests.
+
+        Returns:
+            dict: A dictionary containing the authentication headers.
+        """
         creds = f"{self.acc_username}:{self.acc_password}"
         encoded_creds = base64.b64encode(creds.encode())
         return {"Authorization": f"Basic {encoded_creds.decode()}"}
 
     def trigger_card_payment(self, user: User, transaction: Transaction) -> dict:
+        """Triggers a card payment.
+
+        Args:
+            user (User): The user making the payment. The following attributes are required:
+                - email (str)
+                - first_name (str)
+                - last_name (str)
+                - location (str)
+                - username (str)
+                - phone_number (str)
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - payment_method (str)
+                - provider (str)
+                - callback_url (str)
+                - narration (str)
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v1/payments"
         paylod = {
             "amount": transaction.amount,
@@ -43,6 +74,19 @@ class PaydClient:
         return response.json()
 
     def trigger_p2p_payment(self, user: User, transaction: Transaction) -> dict:
+        """Triggers a peer-to-peer payment.
+
+        Args:
+            user (User): The user making the payment. The following attributes are required:
+                - username (str)
+                - phone_number (str)
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - narration (str)
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v2/p2p"
         paylod = {
             "amount": transaction.amount,
@@ -59,6 +103,21 @@ class PaydClient:
         return response.json()
 
     def trigger_payment_request(self, user: User, transaction: Transaction) -> dict:
+        """Triggers a payment request.
+
+        Args:
+            user (User): The user to request payment from. The following attributes are required:
+                - username (str)
+                - phone_number (str)
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - narration (str)
+                - currency (str)
+                - callback_url (str)
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v2/payments"
         paylod = {
             "username": user.username,
@@ -78,6 +137,23 @@ class PaydClient:
         return response.json()
 
     def trigger_paybill_request(self, user: User, transaction: Transaction) -> dict:
+        """Triggers a paybill request.
+
+        Args:
+            user (User): The user making the payment. The following attributes are required:
+                - username (str)
+                - phone_number (str)
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - currency (str)
+                - narration (str)
+                - business_account (str)
+                - business_number (str)
+                - callback_url (str)
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v3/withdrawal"
         paylod = {
             "username": user.username,
@@ -100,6 +176,22 @@ class PaydClient:
         return response.json()
 
     def trigger_till_request(self, user: User, transaction: Transaction) -> dict:
+        """Triggers a till request.
+
+        Args:
+            user (User): The user making the payment. The following attributes are required:
+                - username (str)
+                - phone_number (str)
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - currency (str)
+                - narration (str)
+                - business_account (str)
+                - callback_url (str)
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v3/withdrawal"
         paylod = {
             "username": user.username,
@@ -120,7 +212,20 @@ class PaydClient:
                 return {}
         return response.json()
 
-    def trigger_widthrawal_request(self, user: User, transaction: Transaction) -> dict:
+    def trigger_withdrawal_request(self, user: User, transaction: Transaction) -> dict:
+        """Triggers a withdrawal request.
+
+        Args:
+            user (User): The user making the withdrawal. The following attributes are required:
+                - phone_number (str)
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - narration (str)
+                - callback_url (str)
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v2/withdrawal"
         paylod = {
             "amount": transaction.amount,
@@ -138,6 +243,11 @@ class PaydClient:
         return response.json()
 
     def query_transaction(self) -> dict:
+        """Queries the transaction history.
+
+        Returns:
+            dict: The API response.
+        """
         url = "https://api.mypayd.app/api/v1/accounts/transaction-requests"
         payload = {}
         headers = self.build_auth_headers()
@@ -149,9 +259,16 @@ class PaydClient:
         return response.json()
 
     def query_transaction_cost(self, transaction: Transaction) -> dict:
-        """
-        trans_type : withdrawal/receipt/remittance
-        channel : mobile/bank/card/payd
+        """Queries the cost of a transaction.
+
+        Args:
+            transaction (Transaction): The transaction details. The following attributes are required:
+                - amount (int)
+                - trans_type (str): One of 'withdrawal', 'receipt', or 'remittance'.
+                - channel (str): One of 'mobile', 'bank', 'card', or 'payd'.
+
+        Returns:
+            dict: The API response.
         """
         url = "https://api.mypayd.app/api/v1/transaction-costs"
         params = {
