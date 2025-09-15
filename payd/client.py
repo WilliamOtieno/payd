@@ -14,6 +14,7 @@ class PaydClient:
     Args:
         username (str): The username for authentication.
         password (str): The password for authentication.
+        payd_user (str): Username used to authenticate with payd. (@top right corner)
     """
 
     def __init__(self, username, password, payd_user):
